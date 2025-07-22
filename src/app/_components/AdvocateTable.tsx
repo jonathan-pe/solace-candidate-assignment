@@ -3,7 +3,7 @@
 import NumberFilterDropdown from "@/app/_components/NumberFilterDropdown";
 import StringFilterDropdown from "@/app/_components/StringFilterDropdown";
 import { Advocate } from "@/types/advocates";
-import { Table, TableColumnsType } from "antd";
+import { Table, TableColumnsType, TableProps } from "antd";
 
 const columns: TableColumnsType<Advocate> = [
   {
@@ -15,6 +15,7 @@ const columns: TableColumnsType<Advocate> = [
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) =>
       StringFilterDropdown(setSelectedKeys, selectedKeys, confirm),
     sorter: (a, b) => a.firstName.localeCompare(b.firstName),
+    width: 1,
   },
   {
     title: "Last Name",
@@ -25,6 +26,7 @@ const columns: TableColumnsType<Advocate> = [
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) =>
       StringFilterDropdown(setSelectedKeys, selectedKeys, confirm),
     sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+    width: 1,
   },
   {
     title: "City",
@@ -35,6 +37,7 @@ const columns: TableColumnsType<Advocate> = [
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) =>
       StringFilterDropdown(setSelectedKeys, selectedKeys, confirm),
     sorter: (a, b) => a.city.localeCompare(b.city),
+    width: 1,
   },
   {
     title: "Degree",
@@ -45,6 +48,7 @@ const columns: TableColumnsType<Advocate> = [
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) =>
       StringFilterDropdown(setSelectedKeys, selectedKeys, confirm),
     sorter: (a, b) => a.degree.localeCompare(b.degree),
+    width: 1,
   },
   {
     title: "Specialties",
@@ -58,6 +62,7 @@ const columns: TableColumnsType<Advocate> = [
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) =>
       StringFilterDropdown(setSelectedKeys, selectedKeys, confirm),
     render: (specialties) => specialties.join(", "),
+    width: 700,
   },
   {
     title: "Years of Experience",
@@ -67,12 +72,35 @@ const columns: TableColumnsType<Advocate> = [
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) =>
       NumberFilterDropdown(setSelectedKeys, selectedKeys, confirm, "Min Years"),
     sorter: (a, b) => a.yearsOfExperience - b.yearsOfExperience,
+    width: 1,
   },
-  { title: "Phone Number", dataIndex: "phoneNumber", key: "phoneNumber" },
+  {
+    title: "Phone Number",
+    dataIndex: "phoneNumber",
+    key: "phoneNumber",
+    width: 1,
+  },
 ];
 
-const AdvocateTable = ({ advocates }: { advocates: Advocate[] }) => {
-  return <Table bordered columns={columns} dataSource={advocates} />;
+const AdvocateTable = ({
+  advocates,
+  onChange,
+}: {
+  advocates: Advocate[];
+  onChange: TableProps<Advocate>["onChange"];
+}) => {
+  return (
+    <Table
+      bordered
+      columns={columns}
+      dataSource={advocates}
+      onChange={onChange}
+      pagination={{ position: ["topRight"] }}
+      rowKey={(record) =>
+        record.firstName + record.lastName + record.phoneNumber
+      }
+    />
+  );
 };
 
 export default AdvocateTable;

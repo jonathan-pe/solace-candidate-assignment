@@ -85,13 +85,16 @@ const columns: TableColumnsType<Advocate> = [
 const AdvocateTable = ({
   advocates,
   onChange,
+  loading = false,
 }: {
   advocates: Advocate[];
   onChange: TableProps<Advocate>["onChange"];
+  loading?: boolean;
 }) => {
   return (
     <Table
       bordered
+      loading={loading}
       columns={columns}
       dataSource={advocates}
       onChange={onChange}

@@ -3,11 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import AdvocateTable from "@/app/_components/AdvocateTable";
 import { Advocate } from "@/types/advocates";
-import { TableProps } from "antd";
+import { TableProps, message } from "antd";
 import { FilterValue } from "antd/es/table/interface";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const fetchAdvocates = useCallback(
     async (
@@ -15,15 +17,26 @@ export default function Home() {
       filters?: Record<string, FilterValue | null>,
       sorter?: any
     ) => {
+      setLoading(true);
+
       console.log("Fetching advocates", { pagination, filters, sorter });
 
-      // Here you would typically make an API call to fetch pages of filtered advocates
-      // For now, we'll just simulate it with the existing data
-      const response = await fetch("/api/advocates");
-      const json = await response.json();
-      setAdvocates(json.data);
+      try {
+        // Here you would typically make an API call to fetch pages of filtered advocates
+        // For now, we'll just simulate it with the existing data
+        const response = await fetch("/api/advocates");
+        const json = await response.json();
+        setAdvocates(json.data);
+      } catch (error) {
+        console.error("Error fetching advocates:", error);
+        messageApi.error(
+          "Whoops! Something went wrong while fetching advocates. Please try again."
+        );
+      } finally {
+        setLoading(false);
+      }
     },
-    []
+    [messageApi]
   );
 
   useEffect(() => {
@@ -46,7 +59,11 @@ export default function Home() {
     <main className="flex flex-col p-8 gap-4">
       <h1 className="text-2xl font-bold">Solace Advocates</h1>
 
-      <AdvocateTable advocates={advocates} onChange={onChange} />
+      <AdvocateTable
+        advocates={advocates}
+        onChange={onChange}
+        loading={loading}
+      />
     </main>
   );
 }
